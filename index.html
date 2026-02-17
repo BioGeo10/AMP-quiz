@@ -279,40 +279,85 @@
     <!-- RAMO A: aquacultura mínima -->
     <div class="question-container" id="q4a">
       <div class="question">
-        <h2>4. Infraestruturas</h2>
+        <h2>4. Atividades não extrativas</h2>
+        <p class="question-help">Turismo, mergulho, investigação (sem retirar recursos)</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="nextQuestion('q5a1')">Não existem / impacto mínimo</button>
+        <button class="option-btn" onclick="nextQuestion('q5a2')">Baixo impacto e pequena escala</button>
+        <button class="option-btn" onclick="nextQuestion('q5a3')">Impacto moderado e escala moderada</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'atividades não extrativas de grande impacto')">Grande impacto</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q5a1">
+      <div class="question">
+        <h2>5. Infraestruturas</h2>
         <p class="question-help">Portos, cais, plataformas ou outras construções</p>
       </div>
       <div class="options">
-        <button class="option-btn" onclick="nextQuestion('q5a')">Não existem / são mínimas (fins específicos)</button>
-        <button class="option-btn" onclick="nextQuestion('q5b')">Sim, impacto moderado / escala média</button>
+        <button class="option-btn" onclick="nextQuestion('q6a1')">Não existem / são mínimas (fins específicos)</button>
+        <button class="option-btn" onclick="nextQuestion('q6a2')">Sim, impacto moderado / escala média</button>
         <button class="option-btn" onclick="goToResult('incompatible', 'infraestruturas de grande impacto')">Sim, grande impacto e/ou grande escala</button>
       </div>
     </div>
 
-    <div class="question-container" id="q5a">
+    <div class="question-container" id="q5a2">
       <div class="question">
-        <h2>5. Ancoragem</h2>
-        <p class="question-help">Barcos podem ancorar na área?</p>
+        <h2>5. Infraestruturas</h2>
+        <p class="question-help">Portos, cais, plataformas ou outras construções</p>
       </div>
       <div class="options">
-        <button class="option-btn" onclick="nextQuestion('q6a')">Não há ancoragem</button>
-        <button class="option-btn" onclick="nextQuestion('q6b')">Sim, infrequente e seletiva</button>
+        <button class="option-btn" onclick="nextQuestion('q6a2')">Sim, impacto moderado / escala média</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'infraestruturas de grande impacto')">Sim, grande impacto e/ou grande escala</button>
       </div>
     </div>
 
-    <div class="question-container" id="q5b">
+    <div class="question-container" id="q5a3">
       <div class="question">
-        <h2>5. Ancoragem</h2>
-        <p class="question-help">Barcos podem ancorar na área?</p>
+        <h2>5. Infraestruturas</h2>
+        <p class="question-help">Portos, cais, plataformas ou outras construções</p>
       </div>
       <div class="options">
-        <button class="option-btn" onclick="nextQuestion('q6c')">Sim, há ancoragem</button>
+        <button class="option-btn" onclick="nextQuestion('q6a3')">Sim, impacto moderado / escala média</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'infraestruturas de grande impacto')">Sim, grande impacto e/ou grande escala</button>
       </div>
     </div>
 
-    <div class="question-container" id="q6a">
+    <div class="question-container" id="q6a1">
       <div class="question">
-        <h2>6. Pesca</h2>
+        <h2>6. Ancoragem</h2>
+        <p class="question-help">Barcos podem ancorar na área?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="nextQuestion('q7a1')">Não há ancoragem</button>
+        <button class="option-btn" onclick="nextQuestion('q7a2')">Sim, infrequente e seletiva</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q6a2">
+      <div class="question">
+        <h2>6. Ancoragem</h2>
+        <p class="question-help">Barcos podem ancorar na área?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="nextQuestion('q7a3')">Sim, há ancoragem</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q6a3">
+      <div class="question">
+        <h2>6. Ancoragem</h2>
+        <p class="question-help">Barcos podem ancorar na área?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="nextQuestion('q7a4')">Sim, há ancoragem</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q7a1">
+      <div class="question">
+        <h2>7. Pesca</h2>
         <p class="question-help">Que tipo de pesca é permitida?</p>
       </div>
       <div class="options">
@@ -323,9 +368,9 @@
       </div>
     </div>
 
-    <div class="question-container" id="q6b">
+    <div class="question-container" id="q7a2">
       <div class="question">
-        <h2>6. Pesca</h2>
+        <h2>7. Pesca</h2>
         <p class="question-help">Que tipo de pesca é permitida?</p>
       </div>
       <div class="options">
@@ -336,13 +381,24 @@
       </div>
     </div>
 
-    <div class="question-container" id="q6c">
+    <div class="question-container" id="q7a3">
       <div class="question">
-        <h2>6. Pesca</h2>
+        <h2>7. Pesca</h2>
         <p class="question-help">Que tipo de pesca é permitida?</p>
       </div>
       <div class="options">
         <button class="option-btn" onclick="goToResult('light')">Moderada (várias artes, impacto moderado)</button>
+        <button class="option-btn" onclick="goToResult('minimal')">Elevada (muitas artes, grande impacto; não industrial)</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial/incompatível')">Industrial ou incompatível com a conservação</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q7a4">
+      <div class="question">
+        <h2>7. Pesca</h2>
+        <p class="question-help">Que tipo de pesca é permitida?</p>
+      </div>
+      <div class="options">
         <button class="option-btn" onclick="goToResult('minimal')">Elevada (muitas artes, grande impacto; não industrial)</button>
         <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial/incompatível')">Industrial ou incompatível com a conservação</button>
       </div>
