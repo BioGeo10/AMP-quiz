@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -233,18 +231,15 @@
     <!-- CAPA -->
     <div class="cover active" id="cover">
       <div class="icons">🐠🐙🌊</div>
-      <p>
-        <p style="max-width: 620px; margin: 0 auto;">
-Vais analisar as <strong>atividades permitidas numa área marinha</strong> e tomar decisões para determinar o 
-<strong>nível de proteção mais adequado</strong> — percebendo se é compatível com a 
-<strong>conservação da biodiversidade</strong>.
-</p>
+      <p style="max-width: 620px; margin: 0 auto;">
+        Vais analisar e tomar decisões sobre as atividades permitidas numa área marinha para determinar o nível de proteção mais adequado — percebendo se é compatível com a conservação da biodiversidade.
+      </p>
+      <p style="margin-top: 18px; font-size: 14px; color: #6b7280;">
+        Não existe uma única resposta correta — cada decisão tem consequências ecológicas.
       </p>
       <button class="primary-btn" onclick="startTree()">Começar 🚀</button>
     </div>
-<p style="margin-top: 18px; font-size: 14px; color: #6b7280;">
-Não existe uma única resposta correta — cada decisão tem consequências ecológicas.
-</p>
+
     <!-- QUESTÕES -->
     <div class="question-container" id="q1">
       <div class="question">
@@ -421,7 +416,7 @@ Não existe uma única resposta correta — cada decisão tem consequências eco
       </div>
       <div class="options">
         <button class="option-btn" onclick="nextQuestion('q5d')">Impacto moderado e escala moderada</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'impacto/escala incompatíveis')">Incompatível com a conservação</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'atividades não extrativas de grande impacto')">Grande impacto</button>
       </div>
     </div>
 
@@ -439,19 +434,17 @@ Não existe uma única resposta correta — cada decisão tem consequências eco
     <!-- RESULTADOS -->
     <div class="result" id="result-full">
       <div class="result-icon">🏆</div>
-      <h2>Totalmente protegida</h2>
-      <div class="result-level level-full">FULLY PROTECTED</div>
+      <h2>Proteção Total</h2>
       <div class="result-description">
         <p><strong>Não existem atividades extrativas.</strong> A pesca não é permitida e as restantes atividades humanas são extremamente limitadas.</p>
-        <p>Este nível favorece a conservação da biodiversidade e a recuperação de ecossistemas, funcionando também como “fonte” de indivíduos para áreas vizinhas.</p>
+        <p>Este nível favorece a conservação da biodiversidade e a recuperação de ecossistemas, funcionando como área de reprodução e crescimento que beneficia zonas adjacentes.</p>
       </div>
       <button class="secondary-btn" onclick="restartTree()">Analisar outro cenário</button>
     </div>
 
     <div class="result" id="result-high">
       <div class="result-icon">🥇</div>
-      <h2>Altamente protegida</h2>
-      <div class="result-level level-high">HIGHLY PROTECTED</div>
+      <h2>Proteção Alta</h2>
       <div class="result-description">
         <p><strong>Apenas atividades de baixo impacto</strong> (e/ou muito limitadas) são compatíveis com este nível.</p>
         <p>A conservação é prioritária, mas pode existir uso humano reduzido e cuidadosamente regulado.</p>
@@ -461,8 +454,7 @@ Não existe uma única resposta correta — cada decisão tem consequências eco
 
     <div class="result" id="result-light">
       <div class="result-icon">🥈</div>
-      <h2>Levemente protegida</h2>
-      <div class="result-level level-light">LIGHTLY PROTECTED</div>
+      <h2>Proteção Ligeira</h2>
       <div class="result-description">
         <p>Existem <strong>várias atividades permitidas</strong>, com restrições para reduzir impactos.</p>
         <p>Os benefícios de conservação dependem muito do cumprimento das regras e da monitorização.</p>
@@ -472,8 +464,7 @@ Não existe uma única resposta correta — cada decisão tem consequências eco
 
     <div class="result" id="result-minimal">
       <div class="result-icon">🥉</div>
-      <h2>Minimamente protegida</h2>
-      <div class="result-level level-minimal">MINIMALLY PROTECTED</div>
+      <h2>Proteção Mínima</h2>
       <div class="result-description">
         <p>A proteção é <strong>muito limitada</strong> e permite atividades com impactos significativos (desde que não sejam as mais destrutivas/industriais).</p>
         <p>Em geral, os ganhos para a biodiversidade tendem a ser reduzidos.</p>
@@ -483,8 +474,7 @@ Não existe uma única resposta correta — cada decisão tem consequências eco
 
     <div class="result" id="result-incompatible">
       <div class="result-icon">❌</div>
-      <h2>Incompatível com a conservação</h2>
-      <div class="result-level level-incompatible">INCOMPATÍVEL</div>
+      <h2>Incompatível com a Conservação</h2>
       <div class="result-description">
         <p><strong>Motivo:</strong> <span id="incompatible-reason">—</span></p>
         <p>O tipo, intensidade, escala, duração e/ou frequência da(s) atividade(s) permitida(s) é incompatível com a conservação eficaz da natureza.</p>
@@ -495,7 +485,7 @@ Não existe uma única resposta correta — cada decisão tem consequências eco
 
   <script>
     let steps = 0;
-    // “TotalQuestions” aqui é só para a barra de progresso ser coerente;
+    // "TotalQuestions" aqui é só para a barra de progresso ser coerente;
     // como há ramos, usamos um valor aproximado para dar sensação de avanço.
     const totalQuestionsApprox = 6;
 
