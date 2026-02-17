@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Árvore de Decisão — Áreas Marinhas Protegidas</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 900px;
+      width: 100%;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 26px;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #7f8c8d;
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 15px;
+    }
+
+    /* Progress */
+    .progress {
+      background: #e0e0e0;
+      height: 6px;
+      border-radius: 3px;
+      margin-bottom: 26px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+      height: 100%;
+      width: 0%;
+      transition: width 0.5s;
+      border-radius: 3px;
+    }
+
+    /* Intro (FIX: hide by default) */
+    .intro {
+      display: none;
+      text-align: center;
+      padding: 16px 8px 6px;
+    }
+    .intro.active { display: block; }
+
+    .intro p {
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 16px;
+      font-size: 16px;
+      text-align: left;
+      max-width: 780px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .start-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 14px 34px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 6px;
+    }
+    .start-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.35);
+    }
+
+    /* Questions */
+    .question-container { display: none; }
+    .question-container.active { display: block; animation: fadeIn 0.35s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .question {
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      padding: 22px;
+      border-radius: 15px;
+      margin-bottom: 18px;
+      border-left: 5px solid #4facfe;
+    }
+
+    .question h2 {
+      color: #2c3e50;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .question-help {
+      color: #7f8c8d;
+      font-size: 14px;
+      font-style: italic;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background: white;
+      border: 2px solid #e0e0e0;
+      padding: 14px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-size: 16px;
+      text-align: left;
+      color: #2c3e50;
+      position: relative;
+    }
+
+    .option-btn:hover {
+      border-color: #4facfe;
+      background: linear-gradient(135deg, #4facfe10 0%, #00f2fe10 100%);
+      transform: translateX(4px);
+    }
+
+    .option-btn::before {
+      content: '→';
+      position: absolute;
+      right: 16px;
+      opacity: 0;
+      transition: opacity 0.25s;
+      color: #4facfe;
+      font-weight: 700;
+    }
+    .option-btn:hover::before { opacity: 1; }
+
+    /* Results */
+    .result { display: none; text-align: center; padding: 22px 10px; }
+    .result.active { display: block; animation: fadeIn 0.35s; }
+
+    .result-icon { font-size: 64px; margin-bottom: 12px; }
+    .result h2 { color: #2c3e50; font-size: 28px; margin-bottom: 10px; }
+
+    .result-level {
+      display: inline-block;
+      padding: 8px 22px;
+      border-radius: 22px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 16px;
+      letter-spacing: 0.3px;
+    }
+
+    .level-full { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; }
+    .level-high { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+    .level-light { background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%); color: white; }
+    .level-minimal { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+    .level-incompatible { background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%); color: white; }
+
+    .result-description {
+      color: #555;
+      line-height: 1.75;
+      margin: 0 auto 18px;
+      font-size: 16px;
+      text-align: left;
+      max-width: 780px;
+    }
+
+    .restart-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 24px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 800;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+    .restart-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.35);
+    }
+
+    /* Small screens */
+    @media (max-width: 520px) {
+      .container { padding: 26px; }
+      h1 { font-size: 22px; }
+      .option-btn { font-size: 15px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Árvore de Decisão — Áreas Marinhas Protegidas</h1>
+    <p class="subtitle">Classificação do nível de proteção com base nas atividades permitidas</p>
+
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Intro -->
+    <div class="intro active" id="intro">
+      <p>
+        As Áreas Marinhas Protegidas (AMPs) são zonas onde existem regras para reduzir impactos humanos e conservar a biodiversidade.
+        Nesta atividade, vais analisar que atividades são permitidas numa área e, a partir disso, determinar o respetivo nível de proteção.
+      </p>
+      <p><strong>Regista as tuas escolhas.</strong> Se tiveres possibilidade, realiza a atividade em pequeno grupo e compara critérios.</p>
+      <button class="start-btn" onclick="startQuiz()">Iniciar atividade</button>
+    </div>
+
+    <!-- Questions -->
+    <div class="question-container" id="q1">
+      <div class="question">
+        <h2>1. Mineração e exploração</h2>
+        <p class="question-help">Mineração, prospeção ou exploração de petróleo e gás.</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="goToResult('incompatible', 'mineração / petróleo e gás')">É permitido</button>
+        <button class="option-btn" onclick="nextQuestion('q2')">Não é permitido</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q2">
+      <div class="question">
+        <h2>2. Dragagem e despejo</h2>
+        <p class="question-help">Remoção de sedimentos do fundo do mar e despejo de materiais.</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="goToResult('incompatible', 'dragagem / despejo')">É permitido</button>
+        <button class="option-btn" onclick="nextQuestion('q3')">Não é permitido</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q3">
+      <div class="question">
+        <h2>3. Aquacultura</h2>
+        <p class="question-help">Criação de peixes, moluscos ou algas (viveiros marinhos).</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="nextQuestion('q4a')">Inexistente ou muito limitada</button>
+        <button class="option-btn" onclick="nextQuestion('q4b')">Pequena escala e baixo impacto</button>
+        <button class="option-btn" onclick="nextQuestion('q4c')">Escala moderada</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'aquacultura intensiva')">Grande escala / intensiva</button>
+      </div>
+    </div>
+
+    <!-- Branch A: Aquacultura mínima -->
+    <div class="question-container" id="q4a">
+      <div class="question">
+        <h2>4. Infraestruturas</h2>
+        <p class="question-help">Construções como portos, cais, plataformas ou estruturas permanentes.</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="nextQuestion('q5a')">Inexistentes ou muito limitadas (fins específicos)</button>
+        <button class="option-btn" onclick="nextQuestion('q5b')">Impacto moderado e escala média</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'infraestruturas de grande escala')">Grande impacto e/ou larga escala</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q5a">
+      <div class="question">
+        <h2>5. Ancoragem</h2>
+        <p class="question-help">Os barcos podem ancorar na área?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="nextQuestion('q6a')">Não é permitida</button>
+        <button class="option-btn" onclick="nextQuestion('q6b')">É permitida, mas com restrições (controlada / infrequente)</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q5b">
+      <div class="question">
+        <h2>5. Ancoragem</h2>
+        <p class="question-help">Os barcos podem ancorar na área?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="nextQuestion('q6c')">É permitida (frequente / sem restrições relevantes)</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q6a">
+      <div class="question">
+        <h2>6. Pesca</h2>
+        <p class="question-help">Que tipo de pesca é permitida?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="goToResult('full')">Não há pesca</button>
+        <button class="option-btn" onclick="goToResult('high')">Muito limitada, com artes seletivas (até 5 tipos) de baixo impacto</button>
+        <button class="option-btn" onclick="goToResult('light')">Moderada, com várias artes (até 10 tipos) de impacto moderado</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial / artes incompatíveis')">Industrial ou com artes incompatíveis</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q6b">
+      <div class="question">
+        <h2>6. Pesca</h2>
+        <p class="question-help">Que tipo de pesca é permitida?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="goToResult('high')">Muito limitada, com artes seletivas (até 5 tipos) de baixo impacto</button>
+        <button class="option-btn" onclick="goToResult('light')">Moderada, com várias artes (até 10 tipos) de impacto moderado</button>
+        <button class="option-btn" onclick="goToResult('minimal')">Muitos tipos de pesca (mais de 10), com grande impacto (não industrial)</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial / artes incompatíveis')">Industrial ou com artes incompatíveis</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q6c">
+      <div class="question">
+        <h2>6. Pesca</h2>
+        <p class="question-help">Que tipo de pesca é permitida?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="goToResult('light')">Moderada, com várias artes (até 10 tipos) de impacto moderado</button>
+        <button class="option-btn" onclick="goToResult('minimal')">Muitos tipos de pesca (mais de 10), com grande impacto (não industrial)</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial / artes incompatíveis')">Industrial ou com artes incompatíveis</button>
+      </div>
+    </div>
+
+    <!-- Branch B: Aquacultura pequena escala -->
+    <div class="question-container" id="q4b">
+      <div class="question">
+        <h2>4. Infraestruturas</h2>
+        <p class="question-help">Construções como portos, cais, plataformas ou estruturas permanentes.</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="nextQuestion('q5c')">Impacto moderado e escala média</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'infraestruturas de grande escala')">Grande impacto e/ou larga escala</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q5c">
+      <div class="question">
+        <h2>5. Atividades não extrativas</h2>
+        <p class="question-help">Turismo, mergulho, investigação (sem retirada de recursos).</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="nextQuestion('q6d')">Inexistentes ou impacto mínimo</button>
+        <button class="option-btn" onclick="nextQuestion('q6e')">Baixo impacto e pequena escala</button>
+        <button class="option-btn" onclick="nextQuestion('q6f')">Impacto moderado e escala moderada</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'atividades não extrativas de grande impacto')">Grande impacto</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q6d">
+      <div class="question">
+        <h2>6. Pesca</h2>
+        <p class="question-help">Que tipo de pesca é permitida?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="goToResult('high')">Muito limitada, com artes seletivas (até 5 tipos) de baixo impacto</button>
+        <button class="option-btn" onclick="goToResult('light')">Moderada, com várias artes (até 10 tipos) de impacto moderado</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial / artes incompatíveis')">Industrial ou com artes incompatíveis</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q6e">
+      <div class="question">
+        <h2>6. Pesca</h2>
+        <p class="question-help">Que tipo de pesca é permitida?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="goToResult('light')">Moderada, com várias artes (até 10 tipos) de impacto moderado</button>
+        <button class="option-btn" onclick="goToResult('minimal')">Muitos tipos de pesca (mais de 10), com grande impacto (não industrial)</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial / artes incompatíveis')">Industrial ou com artes incompatíveis</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q6f">
+      <div class="question">
+        <h2>6. Pesca</h2>
+        <p class="question-help">Que tipo de pesca é permitida?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="goToResult('minimal')">Muitos tipos de pesca (mais de 10), com grande impacto (não industrial)</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial / artes incompatíveis')">Industrial ou com artes incompatíveis</button>
+      </div>
+    </div>
+
+    <!-- Branch C: Aquacultura escala moderada -->
+    <div class="question-container" id="q4c">
+      <div class="question">
+        <h2>4. Atividades não extrativas</h2>
+        <p class="question-help">Turismo, mergulho, investigação (sem retirada de recursos).</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="nextQuestion('q5d')">Impacto moderado e escala moderada</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'atividades não extrativas incompatíveis')">Impacto elevado (incompatível)</button>
+      </div>
+    </div>
+
+    <div class="question-container" id="q5d">
+      <div class="question">
+        <h2>5. Pesca</h2>
+        <p class="question-help">Que tipo de pesca é permitida?</p>
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="goToResult('minimal')">Muitos tipos de pesca (mais de 10), com grande impacto (não industrial)</button>
+        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial / artes incompatíveis')">Industrial ou com artes incompatíveis</button>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="result" id="result-full">
+      <div class="result-icon">✅</div>
+      <h2>Totalmente protegida</h2>
+      <div class="result-level level-full">FULLY PROTECTED</div>
+      <div class="result-description">
+        <p><strong>Interpretação:</strong> As atividades humanas são extremamente limitadas. Não há pesca; a aquacultura é inexistente ou muito reduzida; não existem infraestruturas relevantes e a ancoragem é proibida ou fortemente restringida.</p>
+        <p><strong>Consequência provável:</strong> Elevada proteção da biodiversidade e elevada capacidade de recuperação do ecossistema.</p>
+      </div>
+      <button class="restart-btn" onclick="restartQuiz()">Rever / recomeçar</button>
+    </div>
+
+    <div class="result" id="result-high">
+      <div class="result-icon">✅</div>
+      <h2>Altamente protegida</h2>
+      <div class="result-level level-high">HIGHLY PROTECTED</div>
+      <div class="result-description">
+        <p><strong>Interpretação:</strong> Apenas atividades de baixo impacto são permitidas. A pesca, quando existe, é muito limitada e com artes seletivas. Existem restrições relevantes a outras atividades.</p>
+        <p><strong>Consequência provável:</strong> Boa proteção da biodiversidade, com benefícios ecológicos significativos.</p>
+      </div>
+      <button class="restart-btn" onclick="restartQuiz()">Rever / recomeçar</button>
+    </div>
+
+    <div class="result" id="result-light">
+      <div class="result-icon">⚠️</div>
+      <h2>Levemente protegida</h2>
+      <div class="result-level level-light">LIGHTLY PROTECTED</div>
+      <div class="result-description">
+        <p><strong>Interpretação:</strong> Várias atividades são permitidas, com algumas restrições. Pode existir pesca moderada e outras atividades com impacto controlado.</p>
+        <p><strong>Consequência provável:</strong> Benefícios de conservação mais limitados; depende fortemente do cumprimento e da monitorização.</p>
+      </div>
+      <button class="restart-btn" onclick="restartQuiz()">Rever / recomeçar</button>
+    </div>
+
+    <div class="result" id="result-minimal">
+      <div class="result-icon">⚠️</div>
+      <h2>Minimamente protegida</h2>
+      <div class="result-level level-minimal">MINIMALLY PROTECTED</div>
+      <div class="result-description">
+        <p><strong>Interpretação:</strong> Muitas atividades extrativas são permitidas (embora não industriais), podendo existir impactos elevados.</p>
+        <p><strong>Consequência provável:</strong> Proteção ecológica reduzida e menor capacidade de recuperação.</p>
+      </div>
+      <button class="restart-btn" onclick="restartQuiz()">Rever / recomeçar</button>
+    </div>
+
+    <div class="result" id="result-incompatible">
+      <div class="result-icon">❌</div>
+      <h2>Incompatível com conservação</h2>
+      <div class="result-level level-incompatible">INCOMPATÍVEL</div>
+      <div class="result-description">
+        <p><strong>Interpretação:</strong> As atividades permitidas têm impacto demasiado elevado para assegurar conservação eficaz.</p>
+        <p id="incompatible-reason"></p>
+        <p><strong>Consequência provável:</strong> Benefícios de conservação muito reduzidos ou inexistentes.</p>
+      </div>
+      <button class="restart-btn" onclick="restartQuiz()">Rever / recomeçar</button>
+    </div>
+
+  </div>
+
+  <script>
+    let currentStep = 0;
+    const totalStepsApprox = 6; // Mantemos "aproximado" (caminhos variam)
+
+    function startQuiz() {
+      document.getElementById('intro').classList.remove('active');
+      currentStep = 0;
+      updateProgress(0);
+      nextQuestion('q1');
+    }
+
+    function nextQuestion(questionId) {
+      // Esconder perguntas e resultados
+      document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+      document.querySelectorAll('.result').forEach(r => r.classList.remove('active'));
+
+      // Mostrar a próxima pergunta
+      const nextQ = document.getElementById(questionId);
+      if (nextQ) {
+        nextQ.classList.add('active');
+        currentStep++;
+        updateProgress(); // sem argumento = cálculo aproximado
+      }
+    }
+
+    function goToResult(level, reason = '') {
+      // Esconder perguntas
+      document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+      // Esconder resultados
+      document.querySelectorAll('.result').forEach(r => r.classList.remove('active'));
+
+      const result = document.getElementById('result-' + level);
+      if (result) {
+        result.classList.add('active');
+
+        if (level === 'incompatible') {
+          const el = document.getElementById('incompatible-reason');
+          if (reason) {
+            el.innerHTML = `<p><strong>Fator determinante:</strong> ${reason}.</p>`;
+          } else {
+            el.innerHTML = '';
+          }
+        }
+
+        updateProgress(100);
+      }
+    }
+
+    // FIX: 0 deve funcionar; por isso testamos undefined
+    function updateProgress(percentage) {
+      const progressBar = document.getElementById('progressBar');
+
+      if (percentage !== undefined) {
+        progressBar.style.width = percentage + '%';
+        return;
+      }
+
+      const progress = (currentStep / totalStepsApprox) * 100;
+      progressBar.style.width = Math.min(progress, 95) + '%';
+    }
+
+    function restartQuiz() {
+      document.querySelectorAll('.result').forEach(r => r.classList.remove('active'));
+      document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+
+      document.getElementById('intro').classList.add('active');
+      currentStep = 0;
+      updateProgress(0);
+    }
+  </script>
+</body>
+</html>
