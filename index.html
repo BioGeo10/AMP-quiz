@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Decidir para proteger: que nível de proteção para uma área marinha?</title>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -67,6 +67,7 @@
       border-radius: 3px;
     }
 
+    /* CAPA */
     .cover{
       display: none;
       text-align: center;
@@ -78,13 +79,21 @@
       font-size: 52px;
       margin: 10px 0 18px;
     }
+
     .cover p{
       color:#555;
       line-height: 1.8;
       font-size: 16px;
       margin: 0 auto 18px;
       max-width: 720px;
-      text-align: justify;
+      text-align: center; /* (alterado) */
+    }
+
+    .warning-text{
+      text-align: center;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-top: 10px;
     }
 
     .primary-btn{
@@ -99,7 +108,7 @@
       transition: transform 0.25s, box-shadow 0.25s;
     }
     .primary-btn:hover{
-      transform: translateY(-2px);
+      transform: translateY(-3px) scale(1.02); /* (alterado) */
       box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
     }
 
@@ -179,7 +188,7 @@
       margin: 0 auto 18px;
       font-size: 16px;
       max-width: 760px;
-      text-align: justify;
+      text-align: left; /* (opcional/alterado: melhor legibilidade no ecrã) */
     }
     .result-description p{ margin-bottom: 10px; }
 
@@ -214,17 +223,20 @@
     <!-- CAPA -->
     <div class="cover active" id="cover">
       <div class="icons">🐠🐙🌊</div>
+
+      <!-- (alterado) texto da capa -->
       <p style="max-width: 620px; margin: 0 auto;">
-        Vais analisar e tomar decisões sobre as atividades permitidas numa área marinha para determinar o nível de proteção mais adequado — percebendo se é compatível com a conservação da biodiversidade.
+        Vais analisar um cenário e tomar decisões sobre as atividades permitidas numa área marinha para determinar o nível de proteção mais adequado — percebendo se é compatível com a conservação da biodiversidade.
       </p>
-     <p class="warning-text">
-    Responde com atenção — cada decisão tem consequências ecológicas.
-      </p>
+
+      <p class="warning-text">Responde com atenção — cada decisão tem consequências ecológicas.</p>
+
       <button class="primary-btn" onclick="startTree()">Começar</button>
-      
+
       <!-- Fonte -->
-      <p style="margin-top: 25px; font-size: 11px; color: #999; line-height: 1.6;">
-        <strong>Fonte:</strong> Adaptado de <em>The MPA Guide Decision Tree: Level of Protection</em> Versão 2 (junho, 2022) - <a href="https://mpa-guide.protectedplanet.net/" target="_blank" style="color: #4facfe; text-decoration: none;">The MPA Guide</a>
+      <p style="margin-top: 25px; font-size: 10px; color: #999; line-height: 1.6;">
+        <strong>Fonte:</strong> Adaptado de <em>The MPA Guide Decision Tree: Level of Protection</em> Versão 2 (junho, 2022) –
+        <a href="https://mpa-guide.protectedplanet.net/" target="_blank" style="color: #4facfe; text-decoration: none;">The MPA Guide</a>
       </p>
     </div>
 
@@ -374,12 +386,13 @@
       </div>
       <button class="secondary-btn" onclick="restartTree()">Analisar outro cenário</button>
     </div>
+
   </div>
 
   <script>
     let steps = 0;
     const totalQuestionsApprox = 7;
-    
+
     // Objeto para guardar todas as decisões
     let decisions = {
       mining: '',
@@ -449,12 +462,11 @@
 
     function calculateResult(){
       console.log('Calculating result with decisions:', decisions);
-      
-      // LÓGICA DE DECISÃO baseada na árvore do PDF
-      
-      let result = 'minimal'; // default
-      
-      // PROTEÇÃO TOTAL - condições mais restritivas
+
+      // LÓGICA DE DECISÃO (mantida)
+      let result = 'minimal';
+
+      // PROTEÇÃO TOTAL
       if (decisions.fishing === 'no' && decisions.nonextr === 'none') {
         if (decisions.anchor === 'no' && decisions.infra === 'none' && decisions.aqua === 'none') {
           result = 'full';
@@ -462,13 +474,12 @@
           result = 'high';
         }
       }
-      
-      // PROTEÇÃO ALTA - pesca limitada com baixas atividades não extrativas
+
+      // PROTEÇÃO ALTA
       else if (decisions.fishing === 'limited') {
         if (decisions.nonextr === 'none') {
           result = 'high';
         } else if (decisions.nonextr === 'moderate') {
-          // Se tem outras atividades moderadas, desce para ligeira
           if (decisions.aqua !== 'none' || decisions.infra === 'moderate' || decisions.anchor === 'moderate') {
             result = 'light';
           } else {
@@ -476,17 +487,17 @@
           }
         }
       }
-      
-      // PROTEÇÃO LIGEIRA - pesca moderada
+
+      // PROTEÇÃO LIGEIRA
       else if (decisions.fishing === 'moderate') {
-        result = 'light'; // Pesca moderada geralmente leva a proteção ligeira
+        result = 'light';
       }
-      
-      // PROTEÇÃO MÍNIMA/INCOMPATÍVEL - pesca alta ou industrial
+
+      // PROTEÇÃO MÍNIMA
       else if (decisions.fishing === 'high') {
         result = 'minimal';
       }
-      
+
       goToResult(result);
     }
 
