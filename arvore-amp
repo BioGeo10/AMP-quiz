@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -67,7 +66,6 @@
       border-radius: 3px;
     }
 
-    /* Capa */
     .cover{
       display: none;
       text-align: center;
@@ -103,7 +101,6 @@
       box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
     }
 
-    /* Questões */
     .question-container{ display:none; }
     .question-container.active{ display:block; animation: fadeIn 0.5s; }
 
@@ -168,28 +165,11 @@
     }
     .option-btn:hover::before{ opacity:1; }
 
-    /* Resultados */
     .result{ display:none; text-align:center; padding: 22px 10px 10px; }
     .result.active{ display:block; animation: fadeIn 0.5s; }
 
     .result-icon{ font-size: 78px; margin-bottom: 16px; }
     .result h2{ color:#2c3e50; font-size: 30px; margin-bottom: 12px; }
-
-    .result-level{
-      display:inline-block;
-      padding: 10px 28px;
-      border-radius: 25px;
-      font-weight: 800;
-      font-size: 16px;
-      margin-bottom: 18px;
-      letter-spacing: 0.3px;
-    }
-
-    .level-full{ background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color:white; }
-    .level-high{ background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color:white; }
-    .level-light{ background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%); color:white; }
-    .level-minimal{ background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color:white; }
-    .level-incompatible{ background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%); color:white; }
 
     .result-description{
       color:#555;
@@ -232,271 +212,201 @@
     <!-- CAPA -->
     <div class="cover active" id="cover">
       <div class="icons">🐠🐙🌊</div>
-      <p>
-        Vais analisar um <strong>cenário</strong> e tomar decisões sobre as atividades permitidas.
-        No final, obténs um <strong>nível de proteção</strong> (ou a indicação de que é
-        <strong>incompatível com a conservação</strong>).
+      <p style="max-width: 620px; margin: 0 auto;">
+        Vais analisar e tomar decisões sobre as atividades permitidas numa área marinha para determinar o nível de proteção mais adequado — percebendo se é compatível com a conservação da biodiversidade.
+      </p>
+      <p style="margin-top: 18px; font-size: 14px; color: #6b7280;">
+        Responde com atenção — cada decisão tem consequências ecológicas.
       </p>
       <button class="primary-btn" onclick="startTree()">Começar 🚀</button>
     </div>
 
-    <!-- QUESTÕES -->
+    <!-- Q1: MINERAÇÃO -->
     <div class="question-container" id="q1">
       <div class="question">
-        <h2>1. Mineração e exploração</h2>
+        <h2>⛏️ 1. Mineração e exploração</h2>
         <p class="question-help">Mineração, prospeção ou exploração de petróleo e gás</p>
       </div>
       <div class="options">
-        <button class="option-btn" onclick="goToResult('incompatible', 'mineração/prospeção/exploração')">Sim, é permitido</button>
-        <button class="option-btn" onclick="nextQuestion('q2')">Não é permitido</button>
+        <button class="option-btn" onclick="setPath('mining', 'no'); nextQuestion('q2')">Não é permitido</button>
+        <button class="option-btn" onclick="setPath('mining', 'yes'); goToResult('incompatible', 'mineração/prospeção/exploração')">Sim, é permitido</button>
       </div>
     </div>
 
+    <!-- Q2: DRAGAGEM -->
     <div class="question-container" id="q2">
       <div class="question">
-        <h2>2. Dragagem e despejo</h2>
+        <h2>🚢 2. Dragagem e despejo</h2>
         <p class="question-help">Remoção de sedimentos do fundo do mar e deposição de materiais</p>
       </div>
       <div class="options">
-        <button class="option-btn" onclick="goToResult('incompatible', 'dragagem/despejo')">Sim, é permitido</button>
-        <button class="option-btn" onclick="nextQuestion('q3')">Não é permitido</button>
+        <button class="option-btn" onclick="setPath('dredging', 'no'); nextQuestion('q3')">Não é permitido</button>
+        <button class="option-btn" onclick="setPath('dredging', 'selective'); nextQuestion('q3')">Infrequente, para fins seletivos</button>
+        <button class="option-btn" onclick="setPath('dredging', 'yes'); goToResult('incompatible', 'dragagem/despejo')">Sim, é permitido</button>
       </div>
     </div>
 
+    <!-- Q3: AQUACULTURA -->
     <div class="question-container" id="q3">
       <div class="question">
-        <h2>3. Aquacultura</h2>
+        <h2>🐟 3. Aquacultura</h2>
         <p class="question-help">Criação de peixes, moluscos ou algas</p>
       </div>
       <div class="options">
-        <button class="option-btn" onclick="nextQuestion('q4a')">Não existe / é mínima</button>
-        <button class="option-btn" onclick="nextQuestion('q4b')">Sim, pequena escala e baixo impacto</button>
-        <button class="option-btn" onclick="nextQuestion('q4c')">Sim, escala moderada</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'aquacultura intensiva/grande escala')">Sim, intensiva ou grande escala</button>
+        <button class="option-btn" onclick="setPath('aqua', 'none'); nextQuestion('q4')">Não existe / é mínima</button>
+        <button class="option-btn" onclick="setPath('aqua', 'small'); nextQuestion('q4')">Pequena escala, baixo impacto</button>
+        <button class="option-btn" onclick="setPath('aqua', 'moderate'); nextQuestion('q4')">Escala moderada</button>
+        <button class="option-btn" onclick="setPath('aqua', 'intensive'); goToResult('incompatible', 'aquacultura intensiva/grande escala')">Intensiva ou grande escala</button>
       </div>
     </div>
 
-    <!-- RAMO A: aquacultura mínima -->
-    <div class="question-container" id="q4a">
+    <!-- Q4: INFRAESTRUTURAS -->
+    <div class="question-container" id="q4">
       <div class="question">
-        <h2>4. Infraestruturas</h2>
+        <h2>🏗️ 4. Infraestruturas</h2>
         <p class="question-help">Portos, cais, plataformas ou outras construções</p>
       </div>
       <div class="options">
-        <button class="option-btn" onclick="nextQuestion('q5a')">Não existem / são mínimas (fins específicos)</button>
-        <button class="option-btn" onclick="nextQuestion('q5b')">Sim, impacto moderado / escala média</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'infraestruturas de grande impacto')">Sim, grande impacto e/ou grande escala</button>
+        <button class="option-btn" onclick="setPath('infra', 'none'); nextQuestion('q5')">Não existem / são mínimas</button>
+        <button class="option-btn" onclick="setPath('infra', 'moderate'); nextQuestion('q5')">Impacto moderado, escala média</button>
+        <button class="option-btn" onclick="setPath('infra', 'large'); goToResult('incompatible', 'infraestruturas de grande impacto/escala')">Grande impacto ou grande escala</button>
       </div>
     </div>
 
-    <div class="question-container" id="q5a">
+    <!-- Q5: ANCORAGEM -->
+    <div class="question-container" id="q5">
       <div class="question">
-        <h2>5. Ancoragem</h2>
+        <h2>⚓ 5. Ancoragem</h2>
         <p class="question-help">Barcos podem ancorar na área?</p>
       </div>
       <div class="options">
-        <button class="option-btn" onclick="nextQuestion('q6a')">Não há ancoragem</button>
-        <button class="option-btn" onclick="nextQuestion('q6b')">Sim, infrequente e seletiva</button>
+        <button class="option-btn" onclick="setPath('anchor', 'no'); nextQuestion('q6')">Não há ancoragem</button>
+        <button class="option-btn" onclick="setPath('anchor', 'low'); nextQuestion('q6')">Sim, infrequente e seletiva (baixo impacto)</button>
+        <button class="option-btn" onclick="setPath('anchor', 'moderate'); nextQuestion('q6')">Sim, impacto moderado ou alto</button>
       </div>
     </div>
 
-    <div class="question-container" id="q5b">
+    <!-- Q6: PESCA -->
+    <div class="question-container" id="q6">
       <div class="question">
-        <h2>5. Ancoragem</h2>
-        <p class="question-help">Barcos podem ancorar na área?</p>
-      </div>
-      <div class="options">
-        <button class="option-btn" onclick="nextQuestion('q6c')">Sim, há ancoragem</button>
-      </div>
-    </div>
-
-    <div class="question-container" id="q6a">
-      <div class="question">
-        <h2>6. Pesca</h2>
+        <h2>🎣 6. Pesca</h2>
         <p class="question-help">Que tipo de pesca é permitida?</p>
       </div>
       <div class="options">
-        <button class="option-btn" onclick="goToResult('full')">Não há pesca</button>
-        <button class="option-btn" onclick="goToResult('high')">Muito limitada e seletiva (baixo impacto)</button>
-        <button class="option-btn" onclick="goToResult('light')">Moderada (várias artes, impacto moderado)</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial/incompatível')">Industrial ou incompatível com a conservação</button>
+        <button class="option-btn" onclick="setPath('fishing', 'no'); nextQuestion('q7')">Não há pesca</button>
+        <button class="option-btn" onclick="setPath('fishing', 'limited'); nextQuestion('q7')">Muito limitada e seletiva (baixo impacto)</button>
+        <button class="option-btn" onclick="setPath('fishing', 'moderate'); nextQuestion('q7')">Moderada (várias artes, impacto moderado)</button>
+        <button class="option-btn" onclick="setPath('fishing', 'high'); nextQuestion('q7')">Elevada ou industrial</button>
       </div>
     </div>
 
-    <div class="question-container" id="q6b">
+    <!-- Q7: ATIVIDADES NÃO EXTRATIVAS -->
+    <div class="question-container" id="q7">
       <div class="question">
-        <h2>6. Pesca</h2>
-        <p class="question-help">Que tipo de pesca é permitida?</p>
-      </div>
-      <div class="options">
-        <button class="option-btn" onclick="goToResult('high')">Muito limitada e seletiva (baixo impacto)</button>
-        <button class="option-btn" onclick="goToResult('light')">Moderada (várias artes, impacto moderado)</button>
-        <button class="option-btn" onclick="goToResult('minimal')">Elevada (muitas artes, grande impacto; não industrial)</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial/incompatível')">Industrial ou incompatível com a conservação</button>
-      </div>
-    </div>
-
-    <div class="question-container" id="q6c">
-      <div class="question">
-        <h2>6. Pesca</h2>
-        <p class="question-help">Que tipo de pesca é permitida?</p>
-      </div>
-      <div class="options">
-        <button class="option-btn" onclick="goToResult('light')">Moderada (várias artes, impacto moderado)</button>
-        <button class="option-btn" onclick="goToResult('minimal')">Elevada (muitas artes, grande impacto; não industrial)</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial/incompatível')">Industrial ou incompatível com a conservação</button>
-      </div>
-    </div>
-
-    <!-- RAMO B: aquacultura pequena escala -->
-    <div class="question-container" id="q4b">
-      <div class="question">
-        <h2>4. Infraestruturas</h2>
-        <p class="question-help">Portos, cais, plataformas ou outras construções</p>
-      </div>
-      <div class="options">
-        <button class="option-btn" onclick="nextQuestion('q5c')">Impacto moderado / escala média</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'infraestruturas de grande impacto')">Grande impacto e/ou grande escala</button>
-      </div>
-    </div>
-
-    <div class="question-container" id="q5c">
-      <div class="question">
-        <h2>5. Atividades não extrativas</h2>
+        <h2>🤿 7. Atividades não extrativas</h2>
         <p class="question-help">Turismo, mergulho, investigação (sem retirar recursos)</p>
       </div>
       <div class="options">
-        <button class="option-btn" onclick="nextQuestion('q6d')">Não existem / impacto mínimo</button>
-        <button class="option-btn" onclick="nextQuestion('q6e')">Baixo impacto e pequena escala</button>
-        <button class="option-btn" onclick="nextQuestion('q6f')">Impacto moderado e escala moderada</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'atividades não extrativas de grande impacto')">Grande impacto</button>
-      </div>
-    </div>
-
-    <div class="question-container" id="q6d">
-      <div class="question">
-        <h2>6. Pesca</h2>
-        <p class="question-help">Que tipo de pesca é permitida?</p>
-      </div>
-      <div class="options">
-        <button class="option-btn" onclick="goToResult('high')">Muito limitada e seletiva (baixo impacto)</button>
-        <button class="option-btn" onclick="goToResult('light')">Moderada (várias artes, impacto moderado)</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial/incompatível')">Industrial ou incompatível com a conservação</button>
-      </div>
-    </div>
-
-    <div class="question-container" id="q6e">
-      <div class="question">
-        <h2>6. Pesca</h2>
-        <p class="question-help">Que tipo de pesca é permitida?</p>
-      </div>
-      <div class="options">
-        <button class="option-btn" onclick="goToResult('light')">Moderada (várias artes, impacto moderado)</button>
-        <button class="option-btn" onclick="goToResult('minimal')">Elevada (muitas artes, grande impacto; não industrial)</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial/incompatível')">Industrial ou incompatível com a conservação</button>
-      </div>
-    </div>
-
-    <div class="question-container" id="q6f">
-      <div class="question">
-        <h2>6. Pesca</h2>
-        <p class="question-help">Que tipo de pesca é permitida?</p>
-      </div>
-      <div class="options">
-        <button class="option-btn" onclick="goToResult('minimal')">Elevada (muitas artes, grande impacto; não industrial)</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial/incompatível')">Industrial ou incompatível com a conservação</button>
-      </div>
-    </div>
-
-    <!-- RAMO C: aquacultura moderada -->
-    <div class="question-container" id="q4c">
-      <div class="question">
-        <h2>4. Atividades não extrativas</h2>
-        <p class="question-help">Turismo, mergulho, investigação (sem retirar recursos)</p>
-      </div>
-      <div class="options">
-        <button class="option-btn" onclick="nextQuestion('q5d')">Impacto moderado e escala moderada</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'impacto/escala incompatíveis')">Incompatível com a conservação</button>
-      </div>
-    </div>
-
-    <div class="question-container" id="q5d">
-      <div class="question">
-        <h2>5. Pesca</h2>
-        <p class="question-help">Que tipo de pesca é permitida?</p>
-      </div>
-      <div class="options">
-        <button class="option-btn" onclick="goToResult('minimal')">Elevada (muitas artes, grande impacto; não industrial)</button>
-        <button class="option-btn" onclick="goToResult('incompatible', 'pesca industrial/incompatível')">Industrial ou incompatível com a conservação</button>
+        <button class="option-btn" onclick="setPath('nonextr', 'none'); calculateResult()">Não existem / impacto mínimo</button>
+        <button class="option-btn" onclick="setPath('nonextr', 'moderate'); calculateResult()">Impacto moderado</button>
+        <button class="option-btn" onclick="setPath('nonextr', 'high'); goToResult('incompatible', 'atividades não extrativas de grande impacto')">Grande impacto</button>
       </div>
     </div>
 
     <!-- RESULTADOS -->
     <div class="result" id="result-full">
       <div class="result-icon">🏆</div>
-      <h2>Totalmente protegida</h2>
-      <div class="result-level level-full">FULLY PROTECTED</div>
+      <h2>Proteção Total</h2>
       <div class="result-description">
-        <p><strong>Não existem atividades extrativas.</strong> A pesca não é permitida e as restantes atividades humanas são extremamente limitadas.</p>
-        <p>Este nível favorece a conservação da biodiversidade e a recuperação de ecossistemas, funcionando também como “fonte” de indivíduos para áreas vizinhas.</p>
+        <p><strong>Este é o nível com maior potencial para restaurar e proteger a biodiversidade e os ecossistemas marinhos saudáveis.</strong></p>
+        <p>Permite a recuperação a longo prazo de espécies, habitats e do funcionamento dos ecossistemas. Favorece o repovoamento de populações e a dispersão de indivíduos para áreas vizinhas.</p>
+        <p>Contribui também para a adaptação às alterações climáticas, melhoria da produtividade pesqueira e proteção costeira.</p>
       </div>
       <button class="secondary-btn" onclick="restartTree()">Analisar outro cenário</button>
     </div>
 
     <div class="result" id="result-high">
       <div class="result-icon">🥇</div>
-      <h2>Altamente protegida</h2>
-      <div class="result-level level-high">HIGHLY PROTECTED</div>
+      <h2>Proteção Alta</h2>
       <div class="result-description">
-        <p><strong>Apenas atividades de baixo impacto</strong> (e/ou muito limitadas) são compatíveis com este nível.</p>
-        <p>A conservação é prioritária, mas pode existir uso humano reduzido e cuidadosamente regulado.</p>
+        <p><strong>Este nível tem alta probabilidade de restaurar e proteger a biodiversidade.</strong></p>
+        <p>Oferece benefícios similares à Proteção Total, embora em menor grau. Pode permitir algumas atividades de baixo impacto, como pesca muito seletiva com artes de baixo impacto.</p>
+        <p>Promove a recuperação de espécies e ecossistemas, melhorando o funcionamento ecológico e os benefícios para as comunidades locais.</p>
       </div>
       <button class="secondary-btn" onclick="restartTree()">Analisar outro cenário</button>
     </div>
 
     <div class="result" id="result-light">
       <div class="result-icon">🥈</div>
-      <h2>Levemente protegida</h2>
-      <div class="result-level level-light">LIGHTLY PROTECTED</div>
+      <h2>Proteção Ligeira</h2>
       <div class="result-description">
-        <p>Existem <strong>várias atividades permitidas</strong>, com restrições para reduzir impactos.</p>
-        <p>Os benefícios de conservação dependem muito do cumprimento das regras e da monitorização.</p>
+        <p><strong>Pode beneficiar algumas espécies que recebem proteções específicas.</strong> Pode aumentar a biomassa, o sucesso reprodutivo e a diversidade genética.</p>
+        <p><strong>No entanto,</strong> as espécies exploradas ou impactadas podem não ter resultados diferentes de áreas não protegidas. A recuperação do funcionamento dos ecossistemas e a resiliência é provável que sejam limitadas e incompletas.</p>
+        <p>Os benefícios de ecossistemas saudáveis (como recuperação de espécies, adaptação climática e melhoria da qualidade da água) são improváveis.</p>
       </div>
       <button class="secondary-btn" onclick="restartTree()">Analisar outro cenário</button>
     </div>
 
     <div class="result" id="result-minimal">
       <div class="result-icon">🥉</div>
-      <h2>Minimamente protegida</h2>
-      <div class="result-level level-minimal">MINIMALLY PROTECTED</div>
+      <h2>Proteção Mínima</h2>
       <div class="result-description">
-        <p>A proteção é <strong>muito limitada</strong> e permite atividades com impactos significativos (desde que não sejam as mais destrutivas/industriais).</p>
-        <p>Em geral, os ganhos para a biodiversidade tendem a ser reduzidos.</p>
+        <p><strong>É improvável que este nível produza resultados significativos</strong> para espécies, habitats ou comunidades marinhas.</p>
+        <p>É provável que as atividades de impacto permitidas nestas áreas resultem num declínio contínuo de espécies e habitats, diminuição do funcionamento dos ecossistemas e redução da resiliência dos ecossistemas.</p>
+        <p>Os benefícios esperados (como melhoria da qualidade da água) podem ser reduzidos ou ocorrer de forma muito gradual ao longo do tempo.</p>
       </div>
       <button class="secondary-btn" onclick="restartTree()">Analisar outro cenário</button>
     </div>
 
     <div class="result" id="result-incompatible">
       <div class="result-icon">❌</div>
-      <h2>Incompatível com a conservação</h2>
-      <div class="result-level level-incompatible">INCOMPATÍVEL</div>
+      <h2>Incompatível com a Conservação da Natureza</h2>
       <div class="result-description">
-        <p><strong>Motivo:</strong> <span id="incompatible-reason">—</span></p>
-        <p>O tipo, intensidade, escala, duração e/ou frequência da(s) atividade(s) permitida(s) é incompatível com a conservação eficaz da natureza.</p>
+        <p><strong>Motivo da incompatibilidade:</strong> <span id="incompatible-reason">—</span></p>
+        <p>O tipo, intensidade, escala, duração e/ou frequência da(s) atividade(s) permitida(s) é tal que é incompatível com a conservação da natureza.</p>
+        <p><em>As orientações do MPA Guide podem ser complementadas com um diálogo entre a autoridade gestora, especialistas em AMPs e comunidades locais para melhorar a proteção e os resultados das AMPs.</em></p>
       </div>
       <button class="secondary-btn" onclick="restartTree()">Analisar outro cenário</button>
+    </div>
+
+    <!-- Fonte -->
+    <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #7f8c8d;">
+      <p><strong>Fonte:</strong> Adaptado de <em>The MPA Guide Decision Tree: Level of Protection</em> Versão 2 (junho, 2022) - <a href="https://mpa-guide.protectedplanet.net/" target="_blank" style="color: #4facfe; text-decoration: none;">The MPA Guide</a></p>
     </div>
   </div>
 
   <script>
     let steps = 0;
-    // “TotalQuestions” aqui é só para a barra de progresso ser coerente;
-    // como há ramos, usamos um valor aproximado para dar sensação de avanço.
-    const totalQuestionsApprox = 6;
+    const totalQuestionsApprox = 7;
+    
+    // Objeto para guardar todas as decisões
+    let decisions = {
+      mining: '',
+      dredging: '',
+      aqua: '',
+      infra: '',
+      anchor: '',
+      fishing: '',
+      nonextr: ''
+    };
+
+    function setPath(category, value) {
+      decisions[category] = value;
+      console.log('Decision:', category, '=', value);
+    }
 
     function startTree(){
       document.getElementById('cover').classList.remove('active');
       steps = 0;
+      decisions = {
+        mining: '',
+        dredging: '',
+        aqua: '',
+        infra: '',
+        anchor: '',
+        fishing: '',
+        nonextr: ''
+      };
       updateProgress(0);
       nextQuestion('q1');
     }
@@ -536,6 +446,51 @@
       }
     }
 
+    function calculateResult(){
+      console.log('Calculating result with decisions:', decisions);
+      
+      // LÓGICA SIMPLIFICADA DE DECISÃO
+      // Baseada na árvore de decisão do PDF, mas simplificada
+      
+      let result = 'minimal'; // default
+      
+      // Se não há pesca E não há atividades não extrativas (ou mínimas)
+      if (decisions.fishing === 'no' && decisions.nonextr === 'none') {
+        if (decisions.anchor === 'no' && decisions.infra === 'none' && decisions.aqua === 'none') {
+          result = 'full'; // Proteção Total
+        } else {
+          result = 'high'; // Proteção Alta
+        }
+      }
+      // Se pesca é limitada
+      else if (decisions.fishing === 'limited') {
+        if (decisions.nonextr === 'none' || decisions.nonextr === 'moderate') {
+          result = 'high'; // Proteção Alta
+        } else {
+          result = 'light'; // Proteção Ligeira
+        }
+      }
+      // Se pesca é moderada
+      else if (decisions.fishing === 'moderate') {
+        if (decisions.nonextr === 'none') {
+          result = 'light'; // Proteção Ligeira
+        } else {
+          result = 'minimal'; // Proteção Mínima
+        }
+      }
+      // Se pesca é alta/industrial
+      else if (decisions.fishing === 'high') {
+        if (decisions.nonextr === 'high') {
+          goToResult('incompatible', 'pesca industrial + atividades não extrativas de grande impacto');
+          return;
+        } else {
+          result = 'minimal'; // Proteção Mínima
+        }
+      }
+      
+      goToResult(result);
+    }
+
     function updateProgress(forced){
       const bar = document.getElementById('progressBar');
       if (typeof forced === 'number'){
@@ -550,6 +505,15 @@
       hideAllQuestions();
       hideAllResults();
       steps = 0;
+      decisions = {
+        mining: '',
+        dredging: '',
+        aqua: '',
+        infra: '',
+        anchor: '',
+        fishing: '',
+        nonextr: ''
+      };
       updateProgress(0);
       document.getElementById('cover').classList.add('active');
     }
