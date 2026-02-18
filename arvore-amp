@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -83,6 +84,7 @@
       font-size: 16px;
       margin: 0 auto 18px;
       max-width: 720px;
+      text-align: justify;
     }
 
     .primary-btn{
@@ -177,7 +179,7 @@
       margin: 0 auto 18px;
       font-size: 16px;
       max-width: 760px;
-      text-align: left;
+      text-align: justify;
     }
     .result-description p{ margin-bottom: 10px; }
 
@@ -219,6 +221,11 @@
         Responde com atenção — cada decisão tem consequências ecológicas.
       </p>
       <button class="primary-btn" onclick="startTree()">Começar 🚀</button>
+      
+      <!-- Fonte -->
+      <p style="margin-top: 25px; font-size: 11px; color: #999; line-height: 1.6;">
+        <strong>Fonte:</strong> Adaptado de <em>The MPA Guide Decision Tree: Level of Protection</em> Versão 2 (junho, 2022) - <a href="https://mpa-guide.protectedplanet.net/" target="_blank" style="color: #4facfe; text-decoration: none;">The MPA Guide</a>
+      </p>
     </div>
 
     <!-- Q1: MINERAÇÃO -->
@@ -364,14 +371,8 @@
       <div class="result-description">
         <p><strong>Motivo da incompatibilidade:</strong> <span id="incompatible-reason">—</span></p>
         <p>O tipo, intensidade, escala, duração e/ou frequência da(s) atividade(s) permitida(s) é tal que é incompatível com a conservação da natureza.</p>
-        <p><em>As orientações do MPA Guide podem ser complementadas com um diálogo entre a autoridade gestora, especialistas em AMPs e comunidades locais para melhorar a proteção e os resultados das AMPs.</em></p>
       </div>
       <button class="secondary-btn" onclick="restartTree()">Analisar outro cenário</button>
-    </div>
-
-    <!-- Fonte -->
-    <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #7f8c8d;">
-      <p><strong>Fonte:</strong> Adaptado de <em>The MPA Guide Decision Tree: Level of Protection</em> Versão 2 (junho, 2022) - <a href="https://mpa-guide.protectedplanet.net/" target="_blank" style="color: #4facfe; text-decoration: none;">The MPA Guide</a></p>
     </div>
   </div>
 
@@ -449,43 +450,41 @@
     function calculateResult(){
       console.log('Calculating result with decisions:', decisions);
       
-      // LÓGICA SIMPLIFICADA DE DECISÃO
-      // Baseada na árvore de decisão do PDF, mas simplificada
+      // LÓGICA DE DECISÃO baseada na árvore do PDF
       
       let result = 'minimal'; // default
       
-      // Se não há pesca E não há atividades não extrativas (ou mínimas)
+      // PROTEÇÃO TOTAL - condições mais restritivas
       if (decisions.fishing === 'no' && decisions.nonextr === 'none') {
         if (decisions.anchor === 'no' && decisions.infra === 'none' && decisions.aqua === 'none') {
-          result = 'full'; // Proteção Total
+          result = 'full';
         } else {
-          result = 'high'; // Proteção Alta
+          result = 'high';
         }
       }
-      // Se pesca é limitada
+      
+      // PROTEÇÃO ALTA - pesca limitada com baixas atividades não extrativas
       else if (decisions.fishing === 'limited') {
-        if (decisions.nonextr === 'none' || decisions.nonextr === 'moderate') {
-          result = 'high'; // Proteção Alta
-        } else {
-          result = 'light'; // Proteção Ligeira
-        }
-      }
-      // Se pesca é moderada
-      else if (decisions.fishing === 'moderate') {
         if (decisions.nonextr === 'none') {
-          result = 'light'; // Proteção Ligeira
-        } else {
-          result = 'minimal'; // Proteção Mínima
+          result = 'high';
+        } else if (decisions.nonextr === 'moderate') {
+          // Se tem outras atividades moderadas, desce para ligeira
+          if (decisions.aqua !== 'none' || decisions.infra === 'moderate' || decisions.anchor === 'moderate') {
+            result = 'light';
+          } else {
+            result = 'high';
+          }
         }
       }
-      // Se pesca é alta/industrial
+      
+      // PROTEÇÃO LIGEIRA - pesca moderada
+      else if (decisions.fishing === 'moderate') {
+        result = 'light'; // Pesca moderada geralmente leva a proteção ligeira
+      }
+      
+      // PROTEÇÃO MÍNIMA/INCOMPATÍVEL - pesca alta ou industrial
       else if (decisions.fishing === 'high') {
-        if (decisions.nonextr === 'high') {
-          goToResult('incompatible', 'pesca industrial + atividades não extrativas de grande impacto');
-          return;
-        } else {
-          result = 'minimal'; // Proteção Mínima
-        }
+        result = 'minimal';
       }
       
       goToResult(result);
