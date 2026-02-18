@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Árvore de Decisão - Áreas Marinhas Protegidas</title>
+  <title>Decidir para proteger: que nível de proteção para uma área marinha?</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
